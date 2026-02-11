@@ -146,7 +146,13 @@ def arlbench_preprocessing(df, env_name, num_seeds):
     df = df.merge(max_df, on=["config_id", "optimizer"], how="left")
     df = df.merge(auc_df, on=["config_id", "optimizer"], how="left")
     df = df[["config_id"] + [col for col in df.columns if col != "config_id"]]
-    df = df.drop(columns=["training_steps", "optimization_step"])
+
+    
+    # Only drop columns that exist
+    cols_to_drop = [col for col in ["training_steps", "optimization_step"] if col in df.columns]
+    if cols_to_drop:
+        df = df.drop(columns=cols_to_drop)
+
     df.drop_duplicates(subset=hp_keys + ["config_id", "optimizer", "seed"], keep="first", inplace=True)
 
     for perf_key in ["last_performance", "max_performance", "auc_performance"]:
@@ -207,6 +213,10 @@ def download_arlbench(cfg):
 
             data = pd.concat(data).reset_index()
 
+            # Add default optimizer column for landscape data
+            if "optimizer" not in data.columns:
+                data["optimizer"] = "default"
+
             data = arlbench_preprocessing(data, cfg.env_name, cfg.num_seeds)
             num_configs = data["config_id"].nunique()
             rng = np.random.default_rng(42)
@@ -257,7 +267,7 @@ def download_arlbench(cfg):
 
     return filename, f"{cfg.dir}/{cfg.data_dir}/{cfg.env_name}_{cfg.algorithm}.csv"
 
-@hydra.main(config_path=".", config_name="download_config", version_base="1.1")
+@hydra.main(config_path="/download_configs", config_name="download_config", version_base="1.1")
 def download_data(cfg):
     if cfg.benchmark == "arlbench":
         return download_arlbench(cfg)
