@@ -4,3 +4,9 @@ arlbench_data/
 _figures/
 .DS_Store
 _trashbin/
+
+arlbench_data_analysis/arlbenchdataanalysis.egg-info/
+
+__pycache__/
+**/__pycache__/
+*.pyc

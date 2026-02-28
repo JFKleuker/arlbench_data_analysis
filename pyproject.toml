@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "arlbenchdataanalysis"            # distribution name on pip (can have hyphens)
+version = "0.0.1"
+description = "FITE"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []
+
+[tool.setuptools]
+package-dir = {"" = "arlbench_data_analysis"}
+
+[tool.setuptools.packages.find]
+where = ["arlbench_data_analysis"]
